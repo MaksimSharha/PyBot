@@ -4,6 +4,9 @@ import random
 import pytz
 from datetime import datetime, timedelta
 import string
+import logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.DEBUG)
 
 # Вопросы разделены по категориям
 questions = [
@@ -221,8 +224,9 @@ async def set_activity_time_callback(update: Update, context: ContextTypes.DEFAU
     if user_id not in user_data:
         user_data[user_id] = {'time': None, 'activity_time': None}
         
-    # Теперь безопасно обновляем данные пользователя
-    user_data[user_id]['time'] = time_value
+    # Обновление данных пользователя    
+    user_data[user_id]['time'] = query.data
+    user_data[user_id]["activity_time"] = query.data
         
     user_data[user_id]["activity_time"] = query.data
     await query.edit_message_text(f"Вы выбрали время для совместной деятельности: {query.data}")
@@ -305,6 +309,12 @@ async def reset_bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     # API-ключ
     api_key = '7055486716:AAFpEl2cydDWw98BjRSeEsYmWFoUpjysdiQ'
+    
+    try:
+        application.run_polling()
+        print("Бот успешно запущен")
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
 
     application = Application.builder().token(api_key).build()
 
@@ -330,3 +340,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
